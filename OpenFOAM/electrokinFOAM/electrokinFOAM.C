@@ -99,7 +99,6 @@ int main(int argc, char *argv[])
         );
 
         // --- PIMPLElike loop for ion dynamics
-
         for (int corr=0; corr<nOuterCorrIons; corr++)
         {
 	
@@ -149,7 +148,6 @@ int main(int argc, char *argv[])
     	    Info << "nMinus equation solved \n";
 
             // --- PISOlike loop for electric potential
-
             for (int inCorr=0; inCorr<nCorrIons; inCorr++)
             {
                 fvScalarMatrix PhiEqn
@@ -167,9 +165,10 @@ int main(int argc, char *argv[])
 
                 Info << "ePhi equation solved \n";
             }
+           // --- end of PISOlike loop for ion dynamics
 
         }
-        // --- end of PISOlike loop for ion dynamics
+        // --- end of PIMPLElike loop for ion dynamics
 
 
         // --- other usefull fields calculations
