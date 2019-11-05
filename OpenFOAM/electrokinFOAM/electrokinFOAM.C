@@ -41,33 +41,8 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
-
-    IOdictionary timeDict
-    (
-        IOobject
-        (
-            "time",
-            runTime.timeName(),
-            "uniform",
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE,
-            false
-        )
-    );
-
     #include "readTimeControls.H"
  
-    if (timeDict.headerOk() and adjustTimeStep)
-    {
-        scalar initialDeltaT;
-        timeDict.lookup("deltaT") >> initialDeltaT;
-        runTime.setDeltaT
-        (
-            initialDeltaT
-        );
-    }
-
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     dimensionedScalar nEE = (e/epsilon)*nRef;
@@ -89,14 +64,13 @@ int main(int argc, char *argv[])
 
         if (adjustTimeStep)
         {
-                if (CoNum > maxCo*4.) deltaTFact = maxCo/(CoNum + SMALL)/4.; 
-                if (CoNum < maxCo/4.) deltaTFact = 4.;
+            if (CoNum > maxCo) deltaTFact = maxCo/(CoNum + SMALL)/2.; 
+            if (CoNum + SMALL < maxCo/2.) deltaTFact = 1.01;
+            runTime.setDeltaT
+            (
+                    min(runTime.deltaT().value()*deltaTFact,maxDeltaT)
+            );
         }
-
-        runTime.setDeltaT
-        (
-                min(runTime.deltaT().value()*deltaTFact,maxDeltaT)
-        );
 
         // --- PIMPLElike loop for ion dynamics
         for (int corr=0; corr<nOuterCorrIons; corr++)
